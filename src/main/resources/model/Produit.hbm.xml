@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE hibernate-mapping PUBLIC
+        "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+        "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+
+<hibernate-mapping package="model">
+    <class name="Produit" table="produits">
+        <id name="idProduit" column="id_produit" type="long">
+            <generator class="identity"/>
+        </id>
+
+        <property name="nom" column="nom" type="string" not-null="true" length="100"/>
+        <property name="description" column="description" type="string" not-null="true" length="255"/>
+        <property name="prix" column="prix" type="double" not-null="true"/>
+    </class>
+</hibernate-mapping>

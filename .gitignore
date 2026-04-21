@@ -1,0 +1,20 @@
+# Maven 
+/target/ 
+ 
+# Eclipse 
+.project 
+.classpath 
+.settings/ 
+ 
+# VS Code 
+.vscode/ 
+ 
+# Metals 
+.metals/ 
+ 
+# Logs 
+*.log 
+ 
+# OS 
+.DS_Store 
+Thumbs.db 
