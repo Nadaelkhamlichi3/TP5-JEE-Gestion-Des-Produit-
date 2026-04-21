@@ -54,9 +54,9 @@ Application web JEE permettant la gestion des produits et des utilisateurs avec 
 
 - `main` → version principale
 - `xml-version` → version Hibernate XML
-- `annotations-version` → version finale avec annotations ✅
+- `annotations-version` → version avec annotations ✅
 
 ---
 
 ## 🚀 Auteur
-Nada El Khamlichi
+Nada El-Khamlichi
