@@ -5,8 +5,8 @@ import model.Produit;
 
 public interface ProduitDao {
     void save(Produit produit);
-    List<Produit> findAll();
-    Produit findById(Long id);
     void update(Produit produit);
     void delete(Long id);
+    Produit findById(Long id);
+    List<Produit> findAll();
 }

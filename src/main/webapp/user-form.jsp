@@ -3,14 +3,14 @@
 <html>
 <head>
     <meta charset="UTF-8">
-    <title>Connexion</title>
+    <title>Ajouter un utilisateur</title>
     <link rel="stylesheet" href="assets/css/style.css">
 </head>
 <body>
-    <div class="auth-wrapper">
-        <div class="card auth-card">
-            <h2>Connexion</h2>
-            <p class="subtitle">Connectez-vous pour accéder à la liste des produits.</p>
+    <div class="page">
+        <div class="card form-card">
+            <h2>Ajouter un utilisateur</h2>
+            <p class="subtitle">L'administrateur peut créer un USER ou un ADMIN.</p>
 
             <%
                 String error = (String) request.getAttribute("error");
@@ -22,7 +22,7 @@
             %>
 
             <form action="action" method="post">
-                <input type="hidden" name="action" value="login">
+                <input type="hidden" name="action" value="addUser">
 
                 <div class="form-group">
                     <label>Nom d'utilisateur</label>
@@ -34,12 +34,19 @@
                     <input type="password" name="password" required>
                 </div>
 
-                <button type="submit" class="btn btn-primary">Se connecter</button>
-            </form>
+                <div class="form-group">
+                    <label>Rôle</label>
+                    <select name="roleName" required>
+                        <option value="USER">USER</option>
+                        <option value="ADMIN">ADMIN</option>
+                    </select>
+                </div>
 
-            <p style="margin-top:18px;">
-                Pas de compte ? <a href="action?action=showRegister">Créer un compte</a>
-            </p>
+                <div class="actions">
+                    <button type="submit" class="btn btn-primary">Enregistrer</button>
+                    <a href="action?action=listProduits" class="btn btn-secondary">Retour</a>
+                </div>
+            </form>
         </div>
     </div>
 </body>

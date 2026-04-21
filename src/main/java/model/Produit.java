@@ -1,9 +1,23 @@
 package model;
 
+import javax.persistence.*;
+
+@Entity
+@Table(name = "produits")
 public class Produit {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id_produit")
     private Long idProduit;
+
+    @Column(name = "nom", nullable = false)
     private String nom;
+
+    @Column(name = "description", nullable = false)
     private String description;
+
+    @Column(name = "prix", nullable = false)
     private Double prix;
 
     public Produit() {

@@ -34,8 +34,10 @@
                     <input type="password" name="password" required>
                 </div>
 
-                <button type="submit" class="btn btn-primary">S'inscrire</button>
-                <a href="action?action=showLogin" class="btn btn-secondary">Retour</a>
+                <div class="actions">
+                    <button type="submit" class="btn btn-primary">S'inscrire</button>
+                    <a href="action?action=showLogin" class="btn btn-secondary">Retour</a>
+                </div>
             </form>
         </div>
     </div>

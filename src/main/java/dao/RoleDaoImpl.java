@@ -13,37 +13,46 @@ public class RoleDaoImpl implements RoleDao {
 
     @Override
     public void save(Role role) {
+        Session session = null;
         Transaction tx = null;
-        try (Session session = HibernateUtil.getSessionFactory().openSession()) {
+
+        try {
+            session = HibernateUtil.getSessionFactory().openSession();
             tx = session.beginTransaction();
             session.save(role);
             tx.commit();
         } catch (Exception e) {
             if (tx != null) tx.rollback();
             e.printStackTrace();
-        }
-    }
-
-    @Override
-    public Role findById(Long id) {
-        try (Session session = HibernateUtil.getSessionFactory().openSession()) {
-            return session.get(Role.class, id);
+        } finally {
+            if (session != null) session.close();
         }
     }
 
     @Override
     public Role findByName(String name) {
-        try (Session session = HibernateUtil.getSessionFactory().openSession()) {
-            Query<Role> query = session.createQuery("from Role where name = :name", Role.class);
-            query.setParameter("name", name);
+        Session session = null;
+        try {
+            session = HibernateUtil.getSessionFactory().openSession();
+
+            Query<Role> query = session.createQuery(
+                    "from Role where name = :name", Role.class);
+            query.setParameter("name", name.trim());
+
             return query.uniqueResult();
+        } finally {
+            if (session != null) session.close();
         }
     }
 
     @Override
     public List<Role> findAll() {
-        try (Session session = HibernateUtil.getSessionFactory().openSession()) {
+        Session session = null;
+        try {
+            session = HibernateUtil.getSessionFactory().openSession();
             return session.createQuery("from Role", Role.class).list();
+        } finally {
+            if (session != null) session.close();
         }
     }
 }

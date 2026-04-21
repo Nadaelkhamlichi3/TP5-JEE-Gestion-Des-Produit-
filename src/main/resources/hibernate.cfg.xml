@@ -16,9 +16,9 @@
         <property name="hibernate.format_sql">true</property>
         <property name="hibernate.hbm2ddl.auto">update</property>
 
-        <mapping resource="model/Role.hbm.xml"/>
-        <mapping resource="model/User.hbm.xml"/>
-        <mapping resource="model/Produit.hbm.xml"/>
+        <mapping class="model.Role"/>
+        <mapping class="model.User"/>
+        <mapping class="model.Produit"/>
 
     </session-factory>
 </hibernate-configuration>

@@ -6,10 +6,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.List;
 
 import javax.servlet.ServletException;
-import javax.servlet.http.HttpServlet;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
+import javax.servlet.http.*;
 
 import model.Produit;
 import model.User;
@@ -53,7 +50,6 @@ public class ActionServlet extends HttpServlet {
         }
 
         switch (action) {
-
             case "showLogin":
                 request.getRequestDispatcher("login.jsp").forward(request, response);
                 break;
@@ -90,6 +86,26 @@ public class ActionServlet extends HttpServlet {
                 addProduit(request, response);
                 break;
 
+            case "showEditProduit":
+                showEditProduit(request, response);
+                break;
+
+            case "updateProduit":
+                updateProduit(request, response);
+                break;
+
+            case "deleteProduit":
+                deleteProduit(request, response);
+                break;
+
+            case "showAddUser":
+                request.getRequestDispatcher("user-form.jsp").forward(request, response);
+                break;
+
+            case "addUser":
+                addUser(request, response);
+                break;
+
             default:
                 response.sendRedirect(request.getContextPath() + "/action?action=showLogin");
                 break;
@@ -109,12 +125,18 @@ public class ActionServlet extends HttpServlet {
             return;
         }
 
+        if (userService.usernameExists(username.trim())) {
+            request.setAttribute("error", "Nom d'utilisateur déjà utilisé.");
+            request.getRequestDispatcher("register.jsp").forward(request, response);
+            return;
+        }
+
         boolean created = userService.registerUser(username.trim(), password.trim(), "USER");
 
         if (created) {
             response.sendRedirect(request.getContextPath() + "/action?action=showLogin");
         } else {
-            request.setAttribute("error", "Nom d'utilisateur déjà utilisé.");
+            request.setAttribute("error", "Erreur lors de la création du compte.");
             request.getRequestDispatcher("register.jsp").forward(request, response);
         }
     }
@@ -186,7 +208,7 @@ public class ActionServlet extends HttpServlet {
             return;
         }
 
-        double prix;
+        Double prix;
         try {
             prix = Double.parseDouble(prixStr);
         } catch (NumberFormatException e) {
@@ -204,5 +226,121 @@ public class ActionServlet extends HttpServlet {
 
         String message = URLEncoder.encode("Produit ajouté avec succès.", StandardCharsets.UTF_8.name());
         response.sendRedirect(request.getContextPath() + "/action?action=listProduits&success=" + message);
+    }
+
+    private void showEditProduit(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+
+        String idStr = request.getParameter("id");
+        if (idStr == null || idStr.trim().isEmpty()) {
+            response.sendRedirect(request.getContextPath() + "/action?action=listProduits");
+            return;
+        }
+
+        Long id = Long.parseLong(idStr);
+        Produit produit = produitService.getProduitById(id);
+
+        if (produit == null) {
+            response.sendRedirect(request.getContextPath() + "/action?action=listProduits");
+            return;
+        }
+
+        request.setAttribute("produit", produit);
+        request.getRequestDispatcher("produit-form.jsp").forward(request, response);
+    }
+
+    private void updateProduit(HttpServletRequest request, HttpServletResponse response)
+            throws IOException, ServletException {
+
+        String idStr = request.getParameter("idProduit");
+        String nom = request.getParameter("nom");
+        String description = request.getParameter("description");
+        String prixStr = request.getParameter("prix");
+
+        if (idStr == null || idStr.trim().isEmpty()
+                || nom == null || nom.trim().isEmpty()
+                || description == null || description.trim().isEmpty()
+                || prixStr == null || prixStr.trim().isEmpty()) {
+            request.setAttribute("error", "Tous les champs sont obligatoires.");
+            request.getRequestDispatcher("produit-form.jsp").forward(request, response);
+            return;
+        }
+
+        Double prix;
+        try {
+            prix = Double.parseDouble(prixStr);
+        } catch (NumberFormatException e) {
+            request.setAttribute("error", "Le prix doit être un nombre valide.");
+            request.getRequestDispatcher("produit-form.jsp").forward(request, response);
+            return;
+        }
+
+        Long id = Long.parseLong(idStr);
+        Produit produit = produitService.getProduitById(id);
+
+        if (produit == null) {
+            response.sendRedirect(request.getContextPath() + "/action?action=listProduits");
+            return;
+        }
+
+        produit.setNom(nom.trim());
+        produit.setDescription(description.trim());
+        produit.setPrix(prix);
+
+        produitService.updateProduit(produit);
+
+        String message = URLEncoder.encode("Produit modifié avec succès.", StandardCharsets.UTF_8.name());
+        response.sendRedirect(request.getContextPath() + "/action?action=listProduits&success=" + message);
+    }
+
+    private void deleteProduit(HttpServletRequest request, HttpServletResponse response)
+            throws IOException {
+
+        String idStr = request.getParameter("id");
+        if (idStr != null && !idStr.trim().isEmpty()) {
+            Long id = Long.parseLong(idStr);
+            produitService.deleteProduit(id);
+        }
+
+        String message = URLEncoder.encode("Produit supprimé avec succès.", StandardCharsets.UTF_8.name());
+        response.sendRedirect(request.getContextPath() + "/action?action=listProduits&success=" + message);
+    }
+
+    private void addUser(HttpServletRequest request, HttpServletResponse response)
+            throws IOException, ServletException {
+
+        String username = request.getParameter("username");
+        String password = request.getParameter("password");
+        String roleName = request.getParameter("roleName");
+
+        if (username == null || username.trim().isEmpty()
+                || password == null || password.trim().isEmpty()
+                || roleName == null || roleName.trim().isEmpty()) {
+            request.setAttribute("error", "Tous les champs sont obligatoires.");
+            request.getRequestDispatcher("user-form.jsp").forward(request, response);
+            return;
+        }
+
+        if (userService.usernameExists(username.trim())) {
+            request.setAttribute("error", "Nom d'utilisateur déjà utilisé.");
+            request.getRequestDispatcher("user-form.jsp").forward(request, response);
+            return;
+        }
+
+        if (!userService.roleExists(roleName.trim())) {
+            request.setAttribute("error", "Rôle introuvable.");
+            request.getRequestDispatcher("user-form.jsp").forward(request, response);
+            return;
+        }
+
+        boolean created = userService.registerUser(username.trim(), password.trim(), roleName.trim());
+
+        if (created) {
+            String message = URLEncoder.encode("Utilisateur ajouté avec succès.", StandardCharsets.UTF_8.name());
+            response.sendRedirect(request.getContextPath() + "/action?action=listProduits&success=" + message);
+        } else {
+            request.setAttribute("error", "Erreur lors de l'ajout de l'utilisateur.");
+            request.getRequestDispatcher("user-form.jsp").forward(request, response);
+        }
     }
 }
